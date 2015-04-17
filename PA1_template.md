@@ -10,8 +10,25 @@ output: html_document
 1. Take out the NA values
 2. Group by date
 3. Sum the steps by date
-```{r}
+
+```r
 library(dplyr);
+```
+
+```
+## 
+## Attaching package: 'dplyr'
+## 
+## The following object is masked from 'package:stats':
+## 
+##     filter
+## 
+## The following objects are masked from 'package:base':
+## 
+##     intersect, setdiff, setequal, union
+```
+
+```r
 library(ggplot2);
 activity <- read.table("activity.csv",sep=",", header=TRUE);
 dayact<-activity[!is.na(activity$steps),]%>% group_by(date) %>% summarise(total = sum(steps));
@@ -21,27 +38,36 @@ intact<-activity[!is.na(activity$steps),]%>% group_by(interval) %>% summarise(to
 
 ## What is mean total number of steps taken per day?
 4. Generate the histogram
-```{r}
 
-
+```r
 hist <- ggplot(dayact, aes(x = date));
 hist + geom_histogram(binwidth=.5, aes(y = total), stat="identity");
-
-
 ```
+
+![plot of chunk unnamed-chunk-2](figure/unnamed-chunk-2-1.png) 
 
 
 5. Calculate the mean
-```{r}
+
+```r
 mean(dayact$total);
+```
+
+```
+## [1] 10766.19
 ```
 
 
 6. calculate the median
 
 
-```{r}
+
+```r
 median(dayact$total);
+```
+
+```
+## [1] 10765
 ```
 
 
@@ -49,18 +75,29 @@ median(dayact$total);
 
 
 7. Create the line plot for the daily pattern
-```{r}
+
+```r
 gp <- ggplot(data=intact, aes(x=interval, y=total));
 gp + geom_line();
 ```
+
+![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-5-1.png) 
 
 
 
 8. Obtain the maximum step interval
 
 
-```{r}
+
+```r
 subset(intact, total==max(intact$total))
+```
+
+```
+## Source: local data frame [1 x 2]
+## 
+##   interval    total
+## 1      835 206.1698
 ```
 
 
@@ -69,15 +106,21 @@ subset(intact, total==max(intact$total))
 
 
 9. Calculate the number of missing step values.
-```{r}
+
+```r
 sum(!is.na(activity$steps))
+```
+
+```
+## [1] 15264
 ```
 
 
 10. NAs will be substituted by the interval mean. It is already calculated.
 11. Go through all the data identifying the NAs and substituting them.
 
-```{r}
+
+```r
 clactivity<-activity;
 for(i in 1:nrow(clactivity)) {
 if(is.na(clactivity[i,]$steps)) {
@@ -87,37 +130,54 @@ clactivity[i,is.na(clactivity[i,])] <- intact[intact[,1]==clactivity[i,]$interva
 ```
 
 12. Recalculate the total number of steps taken each day with the new values
-```{r}
+
+```r
 dayactcl<-clactivity[!is.na(clactivity$steps),]%>% group_by(date) %>% summarise(total = sum(steps));
 hist <- ggplot(dayactcl, aes(x = date));
 hist + geom_histogram(binwidth=.5, aes(y = total), stat="identity");
 ```
+
+![plot of chunk unnamed-chunk-9](figure/unnamed-chunk-9-1.png) 
 13. Calculate the new mean
-```{r}
+
+```r
 mean(dayactcl$total);
 ```
 
+```
+## [1] 10766.19
+```
+
 14. Calculate the new median
-```{r}
+
+```r
 median(dayactcl$total);
+```
+
+```
+## [1] 10766.19
 ```
 
 15. Compare to the initially obtained values
 - Original mean
-```{r, echo=FALSE}
-mean(dayact$total);
+
+```
+## [1] 10766.19
 ```
 - New mean
-```{r, echo=FALSE}
-mean(dayactcl$total);
+
+```
+## [1] 10766.19
 ```
 - Original median
-```{r, echo=FALSE}
-median(dayact$total);
+
+```
+## [1] 10765
 ```
 - New median
-```{r, echo=FALSE}
-median(dayactcl$total);
+
+```
+## [1] 10766.19
 ```
 
 ## Are there differences in activity patterns between weekdays and weekends?
@@ -127,7 +187,8 @@ median(dayactcl$total);
 18. Sumarize the new data
 19. Draw the plot.
 
-```{r}
+
+```r
 day<-c()
 for(i in 1:nrow(clactivity)) {
 if(grepl(weekdays(as.Date(clactivity[i,]$date, "%Y-%m-%d")), "sábado") || grepl( weekdays(as.Date(clactivity[i,]$date, "%Y-%m-%d")), "domingo")) {
@@ -144,6 +205,13 @@ weekendact<-clactivity[!is.na(clactivity$steps),] %>% filter(day=="weekend")%>% 
 
 
 require(grid)
+```
+
+```
+## Loading required package: grid
+```
+
+```r
 vp.layout <- function(x, y) viewport(layout.pos.row=x, layout.pos.col=y)
 arrange_ggplot2 <- function(..., nrow=NULL, ncol=NULL, as.table=FALSE) {
   dots <- list(...)
@@ -174,8 +242,8 @@ gp2 <- ggplot(data=weekendact, aes(x=interval, y=total));
 gp2 <- gp2 + geom_line();
 gp2 <- gp2 + ggtitle("Weekend activity");
 arrange_ggplot2(gp1,gp2,ncol=1);
-
-
 ```
+
+![plot of chunk unnamed-chunk-16](figure/unnamed-chunk-16-1.png) 
 
 
