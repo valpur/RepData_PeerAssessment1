@@ -13,22 +13,6 @@ output: html_document
 
 ```r
 library(dplyr);
-```
-
-```
-## 
-## Attaching package: 'dplyr'
-## 
-## The following object is masked from 'package:stats':
-## 
-##     filter
-## 
-## The following objects are masked from 'package:base':
-## 
-##     intersect, setdiff, setequal, union
-```
-
-```r
 library(ggplot2);
 activity <- read.table("activity.csv",sep=",", header=TRUE);
 dayact<-activity[!is.na(activity$steps),]%>% group_by(date) %>% summarise(total = sum(steps));
@@ -40,8 +24,9 @@ intact<-activity[!is.na(activity$steps),]%>% group_by(interval) %>% summarise(to
 4. Generate the histogram
 
 ```r
-hist <- ggplot(dayact, aes(x = date));
-hist + geom_histogram(binwidth=.5, aes(y = total), stat="identity");
+h1<-dayact
+colnames(h1)<-c("date","steps")
+hist(h1$steps,xlab="steps",main="Histogram of daily steps")
 ```
 
 ![plot of chunk unnamed-chunk-2](figure/unnamed-chunk-2-1.png) 
@@ -133,8 +118,9 @@ clactivity[i,is.na(clactivity[i,])] <- intact[intact[,1]==clactivity[i,]$interva
 
 ```r
 dayactcl<-clactivity[!is.na(clactivity$steps),]%>% group_by(date) %>% summarise(total = sum(steps));
-hist <- ggplot(dayactcl, aes(x = date));
-hist + geom_histogram(binwidth=.5, aes(y = total), stat="identity");
+h2<-dayactcl
+colnames(h2)<-c("date","steps")
+hist(h2$steps,xlab="steps",main="Histogram of daily steps")
 ```
 
 ![plot of chunk unnamed-chunk-9](figure/unnamed-chunk-9-1.png) 
